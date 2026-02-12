@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar + Slideshow Fixed</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!--subscribe icons-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Montserrat;
+    }
+
+    /* ================= NAVBAR ================= */
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100px;
+      padding: 0 clamp(40px, 7vw, 260px);
+      /**20px → mobile  ,5vw → scales naturally ,150px → desktop max**/
+      background: white;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .logo img {
+      height: 60px;
+    }
+
+    /* ================= MENU ================= */
+
+    .menu {
+      display: flex;
+      gap: clamp(6px, 2vw, 35px);
+      align-items: center;
+    }
+
+    .menu li {
+      list-style: none;
+      position: relative;
+    }
+
+    .menu a {
+      text-decoration: none;
+      font-size: 12px;
+      color: black;
+    }
+
+    .menu a::after {
+      content: "";
+      position: absolute;
+      height: 2px;
+      width: 0;
+      left: 0;
+      bottom: -3px;
+      background-color: orange;
+      transition: width 0.3s linear;
+    }
+
+    .menu a:hover::after {
+      width: 100%;
+    }
+
+    /* ================= DROPDOWN ================= */
+
+    .dropdown {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      top: 35px;
+      overflow: hidden;
+      background: white;
+      border-radius: 10px;
+      width: max-content;
+      transform: translateY(-15px);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .adropdown.active .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown li {
+      padding: 8px 15px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .dropdown li:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown a::after {
+      display: none;
+    }
+
+    .dropdown li:hover {
+      background: orange;
+    }
+
+    /* ================= SEARCH ================= */
+    .search-box {
+      position: relative;
+      width: 100px;
+      height: 36px;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 100%;
+      padding: 0 36px 0 12px;
+      /* space for icon */
+      border: 1px solid #eee;
+      border-radius: 6px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search-box button {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* search icon INSIDE input */
+    .search-box button::before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      display: block;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f57c00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    }
+
+    .search-highlight {
+      background: #f76504;
+      padding: 2px;
+    }
+
+    /* ================= DONATE ================= */
+
+    #donate-btn {
+      padding: 6px 14px;
+      font-size: 15px;
+      background: orange;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #donate-btn:hover {
+      background: white;
+      color: orange;
+      border: 1px solid orange;
+    }
+
+    /* ================= HAMBURGER ================= */
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .bar {
+      width: 25px;
+      height: 3px;
+      background-color: black;
+      transition: all 0.3s ease;
+    }
+
+    /* Hamburger animation */
+    .hamburger.toggle .bar:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.toggle .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.toggle .bar:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* ================= SLIDESHOW ================= */
+
+    .slideshow-container {
+      width: 100%;
+      height: 450px;
+      position: relative;
+    }
+
+    .mySlides {
+      display: none;
+      height: 450px;
+    }
+
+    .mySlides img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .myslides-text {
+      position: absolute;
+      top: 49%;
+      left: 5%;
+      line-height: 1.5;
+      max-width: 80%;
+    }
+
+    .myslides-text button {
+      padding: 10px 20px;
+      background: orange;
+      cursor: pointer;
+      border: none;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .dot-container {
+      position: absolute;
+      top: 70%;
+      left: 5%;
+      z-index: 99;
+    }
+
+    .dot {
+      height: 5px;
+      width: 15px;
+      background: #bbb;
+      border: none;
+      margin: 0 2px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: #555;
+    }
+
+    /* ================= ICONS ================= */
+
+    .icon-container {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      /* balanced spacing */
+      margin-top: 30px;
+    }
+
+    .icon img {
+      width: 50px;
+      height: 50px;
+      padding-bottom: 10px;
+    }
+
+    .icon {
+      width: 180px;
+      text-align: center;
+    }
+
+
+    .count {
+      font-size: 25px;
+      font-weight: 600;
+    }
+
+    .arrow {
+      height: 100px;
+      border-left: 1px solid #555;
+
+    }
+
+    /* ================= ABOUT ================= */
+
+    .about-container {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.6;
+      width: 80%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .mob-about-container {
+      display: none;
+    }
+
+    /**********************************cards-container************************************/
+    .menu-container {
+      max-width: 100%;
+      padding-bottom: 30px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+
+    .main-box {
+      width: 60%;
+      height: 270px;
+      margin: 30px auto 0;
+      background: rgb(244, 241, 55);
+      border-radius: 5px;
+      padding-top: 20px;
+    }
+
+    .card-container {
+      display: flex;
+      justify-content: center;
+      gap: clamp(12px, 3vw, 40px);
+      flex-wrap: wrap;
+      margin-top: -200px;
+    }
+
+    .card {
+      width: 230px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: visible;
+      cursor: pointer;
+      flex-wrap: wrap;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card.active {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Video */
+    .card img,
+    .card video {
+      width: 90%;
+      height: 140px;
+      object-fit: contain;
+      border-radius: 6px;
+      transition: opacity 0.3s ease;
+    }
+
+    .card.active video,
+    .card.active img {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Title */
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 10px;
+      color: #333;
+      transition: all 0.4s ease;
+    }
+
+    .card.active .card-title {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+    }
+
+    /* Line */
+    .line {
+      width: 40px;
+      height: 4px;
+      background: #ffcc00;
+      margin: 8px auto 0;
+      border-radius: 4px;
+    }
+
+    /* Card Text */
+    .card-text {
+      position: absolute;
+      top: 60px;
+      left: 10%;
+      right: 10%;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+
+    .card.active .card-text {
+      bottom: 120px;
+      opacity: 1;
+    }
+
+    /* Button */
+    .card-button {
+      position: absolute;
+      top: 130px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      background: #d16704;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 6px 15px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .card.active .card-button {
+      opacity: 1;
+    }
+
+    .card::after {
+      content: "";
+      width: 100%;
+      height: 5px;
+      bottom: 0px;
+      position: absolute;
+      left: 0;
+      border-radius: 0 0 14px 14px;
+      background-color: #ffcc00;
+    }
+
+    .card-button:hover {
+      outline: 8px solid rgb(238, 174, 100);
+    }
+
+    /* .card::after{
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+*/
+
+    .card.active::after {
+      transform: scaleX(1);
+    }
+
+    /*****************************projects-container******************************/
+
+    .project-container {
+      width: 100%;
+    }
+
+    .tab-buttons {
+      display: flex;
+      justify-content: center;
+      /* Changed from space-around for better grouping */
+      flex-wrap: wrap;
+      /* Allows buttons to wrap on small screens */
+      gap: 10px;
+      width: 100%;
+      padding: 0 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+      border: none;
+      background-color: rgb(102, 138, 65);
+      font-size: 14px;
+      white-space: nowrap;
+      /* Prevents text inside button from breaking */
+      transition: 0.3s;
+    }
+
+    .tab-button.active {
+      background-color: black;
+    }
+
+    .tab-content {
+      width: 100%;
+    }
+
+    .tab-details {
+      display: none;
+      width: 90%;
+      /* Increased for better mobile use */
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Update the container to center items vertically */
+    /* Update this section in your <style> tag */
+    .tab-details.active {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      /* Change this back to flex-start to align them at the TOP */
+      align-items: flex-start;
+      gap: clamp(20px, 3vw, 60px);
+
+      padding-top: 20px;
+      /* Optional: adds a little breathing room at the top */
+      animation: fade 0.6s ease-in-out;
+    }
+
+    /* Ensure the text starts exactly at the top of the header */
+    .tab-text {
+      flex: 1.5;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      /* Forces content to stay at the top */
+    }
+
+    /* Stabilize the image container */
+    .tab-img {
+      flex: 1 1 300px;
+      max-width: 350px;
+      /* Ensures the image doesn't center itself */
+    }
+
+    .tab-img-media {
+      border-radius: 10px;
+      width: 100%;
+      max-width: 350px;
+      /* Slightly increased for better desktop presence */
+      height: auto;
+      object-fit: cover;
+    }
+
+
+    .tab-title {
+      margin-top: 0;
+      font-size: clamp(16px, 3vw, 35px);
+      /* Fluid typography */
+    }
+
+    .tab-para {
+      font-size: clamp(12px, 2vw, 16px);
+      /* Fluid typography */
+      padding-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    /* Stats Section (Feets) */
+    /* Prevent wrapping and center them */
+    .feets {
+      display: flex;
+      justify-content: space-evenly;
+      /* Evenly space them across the line */
+      flex-wrap: nowrap;
+      /* 👈 Changed from wrap to nowrap to force one line */
+      align-items: flex-start;
+      gap: clamp(5px, 1vw, 20px);
+      /* Tighter gap for small screens */
+      text-align: center;
+      margin-top: 20px;
+      width: 100%;
+      /* Ensure it takes full width */
+    }
+
+    /* Allow the individual items to shrink */
+    .feet {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      /* 👈 This makes each item take equal space and shrink/grow */
+      min-width: 0;
+      /* 👈 Critical to allow flex items to shrink below their content size */
+    }
+
+    /* Ensure images don't hold the width open */
+    .feet-media {
+      /* Use a percentage or clamp for the width so the icon shrinks too */
+      width: clamp(40px, 8vw, 80px);
+      height: clamp(40px, 8vw, 80px);
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 8px;
+    }
+
+    /* Ensure text doesn't force a wrap */
+    .feet p {
+      margin: 2px 0;
+      font-size: clamp(10px, 1.5vw, 14px);
+      /* Shrink text on smaller screens */
+      word-wrap: break-word;
+      /* Allow long words to break if necessary */
+      width: 100%;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /**********************review-container************************/
+    .review-container {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fff;
+      margin: 0;
+      padding: 50px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .review-container h1 {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 2.5rem;
+      color: #000;
+      margin-bottom: 40px;
+    }
+
+    /* Slider Container */
+    .slider-viewport {
+      width: 100%;
+      max-width: 1200px;
+      /* Adjust based on screen size */
+      overflow: hidden;
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .slider-track {
+      display: flex;
+      transition: transform 1s ease-in-out;
+      /* Moving for 1 second as requested */
+      will-change: transform;
+    }
+
+    /* Individual board */
+    .board {
+      flex: 0 0 33.333%;
+      /* Show 3 boards at a time */
+      box-sizing: border-box;
+      padding: 0 15px;
+      text-align: center;
+      opacity: 1;
+      /* Faded by default */
+      transition: opacity 0.5s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Image Styling */
+    .img-wrapper img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ddd;
+    }
+
+    .client-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 15px 0 5px 0;
+      font-family: serif;
+    }
+
+    .client-role {
+      font-style: italic;
+      color: #555;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    /* Quote Box Styling */
+    .quote-box {
+      background-color: #f2f2f2;
+      /* Default Light Gray */
+      padding: 20px;
+      border-radius: 5px;
+      color: #333;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.5s, color 0.5s;
+    }
+
+    /* --- ACTIVE STATE (The Middle board) --- */
+    .board.active {
+      opacity: 1;
+      transform: scale(1.05);
+      /* Slight pop */
+      transition: all 0.5s;
+      z-index: 2;
+    }
+
+    .board.active .quote-box {
+      background-color: #b30000;
+      /* Deep Red */
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Pagination bits */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .bit {
+      width: 10px;
+      height: 10px;
+      background-color: #ccc;
+      border-radius: 50%;
+    }
+
+    .bit.active {
+      background-color: #b30000;
+    }
+
+    /**********************logo-container************************/
+    .logo-container {
+      width: 100%;
+      overflow: hidden;
+      background: white;
+      /* Often looks better for carousels */
+      display: flex;
+      position: relative;
+    }
+
+    .logos-header {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+
+    /* Create a fade effect on the edges (Pro Tip) */
+    .logo-container::before,
+    .logo-container::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 100px;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .logo-container::before {
+      left: 0;
+      background: linear-gradient(to right, white, transparent);
+    }
+
+    .logo-container::after {
+      right: 0;
+      background: linear-gradient(to left, white, transparent);
+    }
+
+    .group {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap:clamp(10px,2vw,20px);
+      /* Increased gap for breathing room */
+      padding: 10px 0;
+      animation: scroll 20s linear infinite;
+      /* Slowed down to 20s for readability */
+      will-change: transform;
+      width: max-content;
+    }
+
+    .logo-card {
+      width: 150px;
+      height: 100px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-card img {
+      width: 120px;
+      /* Specific width is safer */
+      height: auto;
+      object-fit: contain;
+    }
+
+    /* Hover to pause (Great user experience) */
+    .logo-container:hover .group {
+      animation-play-state: paused;
+    }
+
+    @keyframes scroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    /*********************join us************************/
+    .join-banner {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      /* STRICT LIMIT */
+      background: url("assets/images/joinus10.png") center 20% / cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    /* ================= OVERLAY ================= */
+    .join-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0.55),
+          rgba(0, 0, 0, 0.35));
+    }
+
+    /* ================= CONTENT ================= */
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: #fff;
+      max-width: 1100px;
+      padding: 0 20px;
+    }
+
+    .content h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    /* ================= IMAGE STRIP ================= */
+    .image-strip {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .image-strip img {
+      width: 250px;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: 0.3s ease;
+    }
+
+    .image-strip img:hover {
+      transform: scale(1.05);
+    }
+
+    /* ================= BUTTONS ================= */
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      padding: 12px 32px;
+      border-radius: 25px;
+      font-size: 15px;
+      font-weight: 600;
+      background: transparent;
+      color: white;
+      border: 2px solid #fff;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .cta-btn:hover {
+      background: orange;
+      color: black;
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 768px) {
+      .join-banner {
+        height: auto;
+        padding: 40px 0;
+      }
+
+      .content h1 {
+        font-size: 32px;
+      }
+
+      .image-strip img {
+        width: 110px;
+        height: 80px;
+      }
+
+      .logo-card img{
+      width: 75px;
+      height:auto;
+      }
+    }
+
+    .foot-container {
+      background-color: #3b4e27;
+    }
+
+    .foot-items {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: clamp(20px, 7vw, 100px);
+      color: white;
+      padding: 20px;
+    }
+
+    .foot-items h2 {
+      padding-bottom: 10px;
+    }
+
+    .foot {
+      line-height: 1.5;
+    }
+
+    .foot ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .foot ul li a {
+      text-decoration: none;
+    }
+
+    .foot-container a:link {
+      color: white;
+    }
+
+    .foot-container a:visited {
+      color: white;
+    }
+
+    .foot-line {
+      width: 80%;
+      height: 1px;
+      background-color: white;
+      margin: 0 10%;
+    }
+
+    .contact-details {
+      display: flex;
+      color: white;
+      justify-content: flex-start;
+      align-items: stretch;
+      gap: clamp(10px, 3vw, 50px);
+    }
+
+    .con-det-dup {
+      display: flex;
+      justify-content: space-around;
+      gap: clamp(10px, 2vw, 100px);
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    .contact-text {
+      font-size: 12px;
+    }
+
+    .social-media a {
+      color: white;
+      font-size: 16px;
+      margin-right: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .social-media a:hover .fa-youtube {
+      color: #ff0000;
+    }
+
+    .social-media a:hover .fa-facebook-f {
+      color: #1877f2;
+    }
+
+    .social-media a:hover .fa-instagram {
+      color: #e4405f;
+    }
+
+    .social-media a:hover .fa-x-twitter {
+      color: black;
+    }
+
+    .subs input {
+      width: 100%;
+      padding: 8px 10px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      /* change border */
+      border-radius: 14px;
+      /* rounded corners */
+      background-color: transparent;
+      color: white;
+      outline: none;
+      /* remove default blue outline */
+    }
+
+    .subs input:focus {
+      border-color: #ff4d4d;
+      /* highlight border */
+      box-shadow: 0 0 4px rgba(255, 77, 77, 0.6);
+    }
+
+    .subs input::placeholder {
+      color: #bbb;
+      font-size: 12px;
+    }
+
+    .sbutton {
+      padding: 5px 10px;
+      border-radius: 14px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .mob-foot-items {
+      display: none;
+    }
+
+    /* Divider after each contact item */
+    .contact-details>div {
+      position: relative;
+      padding-right: 20px;
+    }
+
+    /* Vertical line (desktop) */
+    .contact-details>div::after {
+      content: "";
+      position: absolute;
+      top: 20%;
+      right: 0;
+      width: 1px;
+      height: 60%;
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Remove line after last item */
+    .contact-details>div:last-child::after {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+
+      .foot-items {
+        display: none;
+      }
+
+      .foot-container {
+        font-size: 12px;
+        padding: 20px;
+      }
+
+      .mob-foot-items {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        color: white;
+        padding-bottom: 20px;
+        font-size: 12px;
+        /* SAME vertical gap */
+      }
+
+      .mob-foot-items h4 {
+        padding-bottom: 10px;
+      }
+
+      /* SAME layout rules for both rows */
+      .foot-part-one,
+      .foot-part-two {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
+        gap: clamp(20px, 6vw, 80px);
+        padding: 0;
+      }
+
+      .mob {
+        line-height: 1.3;
+      }
+
+      .mob ul {
+        padding: 0;
+        margin: 0;
+      }
+
+      .mob ul li {
+        list-style: none;
+      }
+
+      .mob ul li a {
+        text-decoration: none;
+        color: white;
+      }
+
+      .con-det-dup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0 0 0;
+        font-size: clamp(10px, 2vw, 14px);
+      }
+
+      .contact-details>div {
+        padding-right: 0;
+      }
+
+      .contact-details>div::after {
+        display: none;
+      }
+
+    }
+
+    /* ================= RESPONSIVE QUERIES ================= */
+
+    @media (max-width: 992px) {
+      .tab-details.active {
+        flex-direction: column;
+        /* Stack image and text */
+        align-items: center;
+        text-align: center;
+      }
+
+      /* Flip order for Aranya and Spoorthi so image is always on top in mobile */
+      #arn.active,
+      #vlg.active {
+        flex-direction: column-reverse;
+      }
+
+      .tab-text {
+        max-width: 100%;
+      }
+
+      .feets {
+        justify-content: center;
+      }
+
+      /*****************projects-container*****************/
+      .tab-details.active {
+        flex-direction: column;
+        /* Stack image and text */
+        align-items: center;
+        text-align: center;
+      }
+
+      /* Flip order for Aranya and Spoorthi so image is always on top in mobile */
+      #arn.active,
+      #spt.active {
+        flex-direction: column-reverse;
+
+      }
+
+      .tab-text {
+        max-width: 100%;
+      }
+
+      .feets {
+        justify-content: center;
+      }
+
+      #arn.active .tab-img,
+      #spt.active .tab-img {
+        flex: none;
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+
+    /* ================= MOBILE ================= */
+    @media (min-width: 1024px) {
+      .navbar {
+        padding: 0 200px;
+        /* 👈 increase ONLY on desktop */
+      }
+    }
+
+    @media (max-width: 929px) {
+      .myslides-text h1 {
+        font-size: 16px;
+        line-height: 1.3;
+      }
+
+      .myslides-text h3 {
+        font-size: 12px;
+      }
+
+    }
+
+    @media (max-width: 768px) {
+
+      .navbar {
+        padding: 0 20px;
+        height: auto;
+      }
+
+      .menu {
+        flex-direction: column;
+        width: 100%;
+        background: #111;
+        max-height: 0;
+        position: absolute;
+        overflow: hidden;
+        left: 0;
+        gap: 0;
+        top: 65px;
+        z-index: 99;
+        transition: max-height 0.4s ease;
+      }
+
+      .menu li a {
+        color: white;
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* Disable desktop underline effect */
+      .menu a::after {
+        display: none;
+      }
+
+      .menu li a {
+        color: white;
+        display: block;
+      }
+
+      .menu.open {
+        max-height: 500px;
+      }
+
+      .dropdown li a {
+        color: black;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .search-box,
+      #donate-btn {
+        display: none;
+      }
+
+      .icon-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .arrow {
+        display: none;
+      }
+
+      .menu li {
+        width: 100%;
+      }
+
+      .menu li a {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .menu li:last-child {
+        border-bottom: none;
+      }
+
+      .slideshow-container,
+      .mySlides {
+        height: 300px;
+      }
+
+      .myslides-text {
+        top: 45%;
+        left: 5%;
+        max-width: 90%;
+      }
+
+      .myslides-text button {
+        padding: 8px 16px;
+        font-size: 10px;
+        cursor: pointer;
+      }
+
+      .dot-container {
+        top: 45%;
+        left: 5%;
+        z-index: 1;
+      }
+
+      .icon-container {
+        font-size: 13px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* ✅ centers icons horizontally */
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .count {
+        font-size: 15px;
+      }
+
+      .icon {
+        width: 100%;
+        max-width: 220px;
+        /* keeps icon block neat */
+        text-align: center;
+      }
+
+      .about-container {
+        display: none;
+      }
+
+      .mob-about-container {
+        display: block;
+        line-height: 1.5;
+        font-size: 14px;
+        width: 80%;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .main-box {
+        background: none;
+        height: auto;
+        padding-bottom: 20px;
+      }
+
+      .card-container {
+        margin-top: -10px;
+      }
+
+      .card video,
+      .card img {
+        width: 90%;
+        height: 60px;
+      }
+
+      .card.active .card-title {
+        visibility: hidden;
+        opacity: 0;
+        /* Adds an extra layer of hiding */
+        transition: none !important;
+      }
+
+      .card.active .card-text {
+        top: 10%;
+      }
+
+      .card.active .line {
+        display: none;
+      }
+
+      .card.active .card-button {
+        top: 55%;
+      }
+
+      /************projects-container************/
+      .tab-img-media {
+        max-width: 350px;
+        /* Slightly increased for better desktop presence */
+        max-height: 300px;
+        object-fit: cover;
+      }
+
+      /************reviews-container********************/
+      .review-container h1 {
+        font-size: 1.8rem;
+      }
+
+      .board {
+        flex: 0 0 100%;
+        /* Show 1 card on mobile */
+        opacity: 0.5;
+        /* Dim non-active cards more */
+      }
+
+      .board.active {
+        opacity: 1;
+        transform: scale(1.0);
+        /* Remove scale pop on mobile to prevent overflow */
+      }
+
+      .slider-viewport {
+        padding: 0;
+        /* Remove padding to maximize space */
+      }
+
+      /******************review-container***********************/
+      .board {
+        flex: 0 0 100%;
+      }
+    }
+
+    @media (max-width: 490px) {
+
+      /* Allow cards to stack nicely */
+      .card-container {
+        margin-top: 20px;
+        padding: 0 10px;
+        justify-content: center;
+      }
+
+      .card {
+        width: 130px;
+        /* Slightly wider for better text fit on small screens */
+        height: 160px;
+        /* Fixed height to prevent layout jump when active */
+        cursor: pointer;
+      }
+
+      .card-title {
+        font-size: 13px;
+      }
+
+      /* Adjust positioning for the 'active' (tapped) state on mobile */
+      .card.active .card-text {
+        top: 20px;
+        opacity: 1;
+        font-size: 11px;
+      }
+
+      .card.active .card-button {
+        top: 100px;
+        opacity: 1;
+        font-size: 11px;
+      }
+
+      /* Hide the icon/video when active to make room for text */
+      .card.active img,
+      .card.active video {
+        opacity: 0;
+      }
+
+      .card .line {
+        visibility: hidden;
+      }
+
+      /***********************projects-container*****************/
+      .tab-button {
+        padding: 8px 15px;
+        font-size: 12px;
+        flex: 1 1 40%;
+        /* Two buttons per row on very small screens */
+      }
+
+      .tab-details {
+        width: 95%;
+        padding: 10px;
+      }
+    }
+    /* SCROLL TO TOP BUTTON */
+        .scroll-top {
+            position: fixed;
+            right: 24px;
+            bottom: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: orange;
+            color: #000;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        /* visible state */
+        .scroll-top.show {
+            opacity: 1;
+            pointer-events: auto;
+
+        }
+
+        .scroll-top:hover {
+            color: #fff;
+        }
+
+        /* FLOATING VERTICAL DONATE BUTTON — ALT VERSION */
+        .floating-donate-alt {
+            position: fixed;
+            right: -48px;
+            /* partially hidden */
+            top: 50%;
+            transform: translateY(-50%);
+
+            writing-mode: vertical-rl;
+            /* vertical text */
+            text-orientation: mixed;
+
+            padding: 18px 12px;
+            font-size: 16px;
+            font-weight: 600;
+
+            background: orange;
+            color: #000;
+            border: none;
+            border-radius: 12px 0 0 12px;
+
+            cursor: pointer;
+            z-index: 9999;
+
+            transition: right 0.4s ease, background 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* visible state */
+        .floating-donate-alt.show {
+            right: 0;
+        }
+
+        .floating-donate-alt:hover {
+            background: rgb(82, 173, 91);
+            color: #fff;
+        }
+
+        @media (max-width:768px){
+          .floating-donate-alt{
+            padding: 9px 6px;
+            font-size: 12px;
+          }
+
+          .scroll-top{
+            font-size: 12px;
+            height: 30px;
+            width: 28px;
+          }
+        }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="logo"><img src="assets/images/logo.svg" height="60"></div>
+    <ul class="menu">
+      <li><a href="#">Home</a></li>
+      <li class="adropdown">
+        <a href="#" role="button">About us</a>
+        <ul class="dropdown">
+          <li><a href="#">Know us</a></li>
+          <li><a href="#">Our projects</a></li>
+          <li><a href="#">Our ideas</a></li>
+        </ul>
+      </li>
+      <li class="adropdown">
+        <a href="#" role="button">Our work</a>
+        <ul class="dropdown">
+          <li><a href="#">projects</a></li>
+          <li><a href="#">programms</a></li>
+          <li><a href="#">projects</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Case studies</a></li>
+      <li><a href="#">Blogs</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Gallery</a></li>
+    </ul>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search">
+      <button id="searchBtn" type="button" aria-label="Search"></button>
+    </div>
+    <button id="donate-btn">Donate now</button>
+    <div class="hamburger">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+
+  <!-- SLIDES -->
+  <div class="slideshow-container">
+    <div class="mySlides"><img src="assets/images/img1.png">
+      <div class="myslides-text">
+        <h3>volunteer.lead.inspire</h3>
+        <h1>Join our honest intiative for the betterment</h1>
+        <h1>of world</h1> <br>
+        <button>Join us</button>
+      </div>
+    </div>
+    <div class="mySlides"><img src="assets/images/tpt.jpg">
+      <div class="myslides-text">
+        <h3>volunteer.lead.inspire</h3>
+        <h1>Join our honest intiative for the betterment</h1>
+        <h1> of world</h1> <br>
+        <button>Donate now</button>
+      </div>
+    </div>
+
+    <div class="mySlides"><img src="assets/images/yov.JPG">
+      <div class="myslides-text">
+        <h3>volunteer.lead.inspire</h3>
+        <h1>Join our honest intiative for the betterment</h1>
+        <h1> of world</h1> <br>
+        <button class="mySlides-button">participate</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="dot-container">
+    <button class="dot" onclick="currentslide(1)"></button>
+    <button class="dot" onclick="currentslide(2)"></button>
+    <button class="dot" onclick="currentslide(3)"></button>
+  </div>
+
+  <!-- ICONS -->
+  <div class="icon-container">
+    <div class="icon">
+      <img src="assets/images/icon1.png">
+      <p class="count">194+</p>
+      <p class="count-caption">Volunteers participated</p>
+    </div>
+    <div class="arrow"></div>
+    <div class="icon">
+      <img src="assets/images/icon2.png">
+      <p class="count">259+</p>
+      <p class="count-caption">Activities completed</p>
+    </div>
+    <div class="arrow"></div>
+    <div class="icon">
+      <img src="assets/images/icon3.png">
+      <p class="count">3+</p>
+      <p class="count-caption">Years of experience</p>
+    </div>
+
+  </div>
+
+  <br><br>
+
+  <!-- ABOUT -->
+  <div class="about-container">
+    <h2>About us</h2>
+    <p>Bharatha Rakshana Kavacham is a non-governmental organization (NGO),which is deeply committed
+      to strengthen education foundation and upliftment of rural communities, Environmental
+      awareness, By upholding humanitarian values, in the view of nation’s growth and development.
+      It aims to inspire and empower young individuals, especially from rural areas, with the
+      necessary knowledge to build successful careers,while also working towards the overall
+      development of rural communities. By bridging the gap between knowledge and action,
+      Bharatha Rakshana Kavacham strives to inspire the next generation to protect, preserve,
+      advance the values and strengthen our nation. We believe in standing for humanity,
+      fostering unity, creating a culture of empathy and service. In every step, our commitment
+      is to strengthen the Nation beyond differences and to protect the essence of our
+      shared humanity.</p>
+  </div>
+  <div class="mob-about-container">
+    <h2>About us</h2>
+    <p>Bharatha Rakshana Kavacham is a non-governmental organization (NGO),which is deeply committed
+      to strengthen education foundation and upliftment of rural communities, Environmental
+      awareness, By upholding humanitarian values, in the view of nation’s growth and development.
+      It aims to inspire and empower young individuals, especially from rural areas, with the
+      necessary knowledge to build successful careers,while also working towards the overall
+      development of rural communities. By bridging the gap between knowledge and action, </p>
+  </div>
+
+  <!--menu-container-->
+  <div class="menu-container">
+    <div class="main-box">
+      <h2>What we do</h2>
+    </div>
+
+    <div class="card-container">
+
+      <div class="card">
+        <img src="assets/images/education.gif">
+        <div class="card-title">Education</div>
+        <div class="line"></div>
+        <div class="card-text">
+          Every problem in society roots back to education, so it is our first priority.
+        </div>
+        <button class="card-button">Know more</button>
+      </div>
+
+      <div class="card">
+        <img src="assets/images/ruraldev.webp">
+        <div class="card-title">Rural development</div>
+        <div class="line"></div>
+        <div class="card-text">
+          Ensuring children receive proper nutrition and healthcare.
+        </div>
+        <button class="card-button">Know more</button>
+      </div>
+
+      <div class="card">
+        <img src="assets/images/nutrition.gif">
+        <div class="card-title">Health & Nutrition</div>
+        <div class="line"></div>
+        <div class="card-text">
+          Protecting children from abuse, trafficking, and neglect.
+        </div>
+        <button class="card-button">Know more</button>
+      </div>
+
+      <div class="card">
+        <video src="assets/videos/env.mp4" autoplay loop muted playsinline></video>
+        <div class="card-title">Environment</div>
+        <div class="line"></div>
+        <div class="card-text">
+          Empowering children to express their views confidently.
+        </div>
+        <button class="card-button">Know more</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!--------------------------projects-container------------------------------->
+
+  <section class="project-container">
+
+    <section class="tab-buttons">
+      <button class="tab-button active" data-tab="mgn">Marga Nirdhesham</button>
+      <button class="tab-button" data-tab="arn">Aranya</button>
+      <button class="tab-button" data-tab="spt">spoorthi</button>
+      <button class="tab-button" data-tab="vlg">velugu</button>
+    </section>
+
+    <section class="tab-content">
+
+      <!-- TAB 1 -->
+      <section class="tab-details active" id="mgn">
+        <section class="tab-img">
+          <img class="tab-img-media" src="assets/images/marganirdheshanam.webp" alt="marga nirdheshanam">
+        </section>
+
+        <section class="tab-text">
+          <h2 class="tab-title">lighting the way</h2>
+
+          <p class="tab-para">we started Aranya to To restore balance between humans and nature through action and
+            awareness and
+            Bharatha Rakshana Kavacham is a non-governmental organization (NGO), is more than an NGO
+            Bharatha Rakshana Kavacham is a non-governmental organization (NGO), is more than an NGO
+            which is deeply committed to strengthen education foundation and upbringing values in society and
+            upliftment of rural communities, Environmental awareness, By upholding ethical values in rural
+            humanitarian values, in the view of nation’s growth and development of nation is inevitable but also
+            It aims to inspire and empower young individuals, especially from</p>
+          <section class="feets">
+            <section class="feet">
+              <img class="feet-media" src="assets/images/college.png" alt="">
+              <p>collegs</p>
+              <p>49+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/school.jpg" alt="">
+              <p>schools</p>
+              <p>149+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/support.jpg" alt="">
+              <p>personal support to</p>
+              <p>101+</p>
+            </section>
+          </section>
+        </section>
+      </section>
+
+      <!-- TAB 2 -->
+      <section class="tab-details" id="arn">
+        <section class="tab-text">
+          <h2 class="tab-title">Go green</h2>
+
+          <p class="tab-para">we started Aranya to To restore balance between humans and nature through action and
+            awareness cre
+            and awareness which is deeply committed to strengthen education foundation and building hasbe
+            upliftment of rural communities, Environmental awareness, By upholding mangoes and ap
+            upliftment of rural development communities has been established and leadership has
+            upliftment of poor and backward people, psychological awareness, By upholding dharma</p>
+          <section class="feets">
+            <section class="feet">
+              <video class="feet-media" src="assets/videos/env.mp4" muted playsinline></video>
+              <p>colleges</p>
+              <p>49+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/aranya2.avif" alt="">
+              <p>schools</p>
+              <p>149+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/aranya3.gif" alt="">
+              <p>personal support to</p>
+              <p>102+</p>
+            </section>
+          </section>
+        </section>
+
+        <section class="tab-img">
+          <img class="tab-img-media" src="assets/images/aranya.jpg" alt="">
+        </section>
+      </section>
+
+      <!-- TAB 3 -->
+      <section class="tab-details" id="spt">
+        <section class="tab-text">
+          <h2 class="tab-title">scum of rural area</h2>
+
+          <p class="tab-para">spoorth is a local rural are awareness programs mainly for enlighting drunkards who ruin
+            thier wonder
+            because drinking habits, in rural areas and because of far distance availabily of alcohol few people
+            for the sake of money and demand in the rural areas, in turn this become a worst idea for the
+            living in the rural areas because of hardwork daily wage workers get addicted to alcohol and this
+            later results to many problems as such as family hurdles,social fights and so we are taking steps and
+            It aims to inspire and empower young individuals, especially from</p>
+          <section class="feets">
+            <section class="feet">
+              <img class="feet-media" src="assets/images/spoorthi2.webp" alt="">
+              <p>awareness programs</p>
+              <p>49+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/spoorthi.gif" alt="">
+              <p>Happy families</p>
+              <p>149+</p>
+            </section>
+          </section>
+        </section>
+
+        <section class="tab-img">
+          <img class="tab-img-media" src="assets/images/spoorti.png" alt="">
+        </section>
+      </section>
+      <!-- TAB 4 -->
+      <section class="tab-details" id="vlg">
+        <section class="tab-img">
+          <img class="tab-img-media" src="assets/images/marganirdheshanam.webp" alt="">
+        </section>
+
+        <section class="tab-text">
+          <h2 class="tab-title">With us</h2>
+
+          <p class="tab-para">A sincere program we intiated for the kids who cant afford their educational expenses
+            and awareness which is deeply committed to strengthen education foundation and building has
+            upliftment of rural communities, Environmental awareness, By upholding mangoes
+            for this intial many good hearted,big hearted people came forward and helped us and
+            the kids, with thier help we have helped more than 1100 families we hope we are
+            really helping the society ang building the future</p>
+          <section class="feets">
+            <section class="feet">
+              <img class="feet-media" src="assets/images/velugu.avif" alt="">
+              <p>students sponsored</p>
+              <p>49+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/spoorthi.gif" alt="">
+              <p>sponsors helped</p>
+              <p>149+</p>
+            </section>
+
+            <section class="feet">
+              <img class="feet-media" src="assets/images/velugu.jpg" alt="">
+              <p>funds spent</p>
+              <p>1.2cr+</p>
+            </section>
+          </section>
+        </section>
+      </section>
+
+    </section>
+  </section>
+
+  <!--------------------review-container---------------------->
+  <div class="review-container">
+    <h1>Our Clients Say!</h1>
+
+    <div class="slider-viewport">
+      <div class="slider-track" id="track">
+      </div>
+    </div>
+
+    <div class="pagination">
+      <span class="bit"></span>
+      <span class="bit"></span>
+      <span class="bit"></span>
+      <span class="bit"></span>
+    </div>
+  </div>
+
+  <!--------------------logo-container---------------------->
+  <h1 class="logos-header">Our partners</h1>
+  <div class="logo-container">
+    <div class="group">
+      <div class="logo-card"><img src="assets/images/xap.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zttdlogo.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zcapgemini.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zlalithajewellary.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zmicrosoft.webp" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zgoogle.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/ztuda.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zcmr.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zdmart.avif" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zheritage.webp" alt=""></div>
+      <div class="logo-card"><img src="assets/images/znarayana.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zpantaloons.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zvivahabhojanambu.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zsrichaithanya.jpg" alt=""></div>
+    </div>
+
+     <div class="group">
+      <div class="logo-card"><img src="assets/images/xap.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zttdlogo.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zcapgemini.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zlalithajewellary.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zmicrosoft.webp" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zgoogle.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/ztuda.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zcmr.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zdmart.avif" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zheritage.webp" alt=""></div>
+      <div class="logo-card"><img src="assets/images/znarayana.jpg" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zpantaloons.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zvivahabhojanambu.png" alt=""></div>
+      <div class="logo-card"><img src="assets/images/zsrichaithanya.jpg" alt=""></div>
+    </div>
+  </div>
+  <!-------------------------join-us----------------------------->
+  <section class="join-banner">
+    <div class="content">
+      <h1>Join Us</h1>
+      <p class="subtitle">
+        Be a Catalyst for Change. Volunteer for a Better Tomorrow
+      </p>
+
+      <div class="cta-group">
+        <button class="cta-btn">Volunteer Now</button>
+        <button class="cta-btn">Partner With Us</button>
+      </div>
+    </div>
+  </section>
+  <!------------------------footer------------------------------->
+  <footer class="foot-container">
+    <div class="foot-items">
+      <div class="foot about">
+        <h2>About us</h2>
+        <ul>
+          <li><a href="#">Mission vision</a></li>
+          <li><a href="#">Our values</a></li>
+          <li><a href="#">Our programs</a></li>
+          <li><a href="#">Impact stories</a></li>
+          <li><a href="#">CSR</a></li>
+          <li><a href="#">Our impact</a></li>
+        </ul>
+      </div>
+      <div class="foot involved">
+        <h2>Get involved</h2>
+        <ul>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Volunteer</a></li>
+          <li><a href="#">Intern</a></li>
+          <li><a href="#">Partner</a></li>
+          <li><a href="#">Corporate partners</a></li>
+        </ul>
+      </div>
+      <div class="foot contact">
+        <h2>Contact us</h2>
+        <ul>
+          <li><a href="#">Feedback</a></li>
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </div>
+
+      <div class="foot subscribe">
+        <h2>Subscribe for latest updates</h2>
+        <form class="subs">
+          <input type="text" id="sname" placeholder="Name.."> <br>
+          <input type="tel" id="snumber" placeholder="Mobile num.."><br>
+          <input type="email" id="smail" placeholder="Email.."><br>
+          <button type="submit" class="sbutton">submit</button>
+        </form>
+      </div>
+    </div>
+
+    <!-------------------mobile-screen----------------------->
+    <div class="mob-foot-items">
+      <div class="foot-part-one">
+        <div class="mob about">
+          <h4>About us</h4>
+          <ul>
+            <li><a href="#">Mission vision</a></li>
+            <li><a href="#">Our values</a></li>
+            <li><a href="#">Our programs</a></li>
+            <li><a href="#">Impact stories</a></li>
+            <li><a href="#">CSR</a></li>
+            <li><a href="#">Our impact</a></li>
+          </ul>
+        </div>
+        <div class="mob involved">
+          <h4>Get involved</h4>
+          <ul>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Volunteer</a></li>
+            <li><a href="#">Intern</a></li>
+            <li><a href="#">Partner</a></li>
+            <li><a href="#">Corporate partners</a></li>
+            <li><a href="#">local staff</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-part-two">
+        <div class="mob contact">
+          <h4>Contact us</h4>
+          <ul>
+            <li><a href="#">Feedback</a></li>
+            <li><a href="#">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div class="mob subscribe">
+          <h4>Subscribe</h4>
+          <p><a href="#">subscribe</a> here </p>
+          <p>to get latest updates</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot-line"></div>
+    <div class="con-det-dup">
+      <div class="contact-details">
+        <div class="address">
+          <h3>Address</h3>
+          <p class="contact-text">7/59,5th street,NGOs colony,Tirupati</p>
+        </div>
+        <div class="telephone">
+          <h3>Call us</h3>
+          <p class="contact-text">
+            <a href="tel:8074185335">8074185335</a>
+          </p>
+        </div>
+        <div class="email">
+          <h3>Email us</h3>
+          <p class="contact-text">
+            <a href="mailto:contact@brk.ngo">contact@brk.ngo</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="social-media">
+        <h3 style="color: white;">Follow us</h3>
+        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+  <!----------------floating and scroll up buttons--------------------->
+  <button class="floating-donate-alt" id="floatingDonateAlt">
+        Donate Now
+    </button>
+
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+        ↑
+    </button>
+  <script>
+    //******************search button*************/
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    function searchPage() {
+      const query = searchInput.value.trim();
+      if (!query) return;
+
+      const regex = new RegExp(`(${query})`, "gi");
+      const elements = document.querySelectorAll("p, h1, h2, h3, h4, li, a");
+
+      let found = false;
+
+      elements.forEach(el => {
+        if (getComputedStyle(el).display === "none")
+          return;
+
+        if (!found && el.textContent.match(regex)) {
+
+
+          el.innerHTML = el.innerHTML.replace(
+            regex,
+            `<mark class="search-highlight">$1</mark>`
+          );
+
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          // remove highlight after 5 seconds
+          setTimeout(() => {
+            el.innerHTML = el.innerHTML.replace(
+              /<mark class="search-highlight">(.*?)<\/mark>/gi,
+              "$1"
+            );
+          }, 5000);
+
+          found = true;
+        }
+      });
+
+      if (!found) {
+        alert("No results found");
+      }
+    }
+
+    // icon click
+    searchBtn.addEventListener("click", searchPage);
+
+    // Enter key
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        searchPage();
+      }
+    });
+
+    /************************SLIDESHOW ***************************/
+    let slideIndex = 0;
+    let slideInterval = null;
+
+    showSlides();
+    startSlideshow();
+
+    function showSlides() {
+      let slides = document.getElementsByClassName("mySlides");
+
+      let dots = document.getElementsByClassName("dot");
+
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
+
+      slides[slideIndex - 1].style.display = "block";
+
+      for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove("active");
+      }
+      dots[slideIndex - 1].classList.add("active");
+    }
+
+    function startSlideshow() {
+      if (!slideInterval) {                 // guard
+        slideInterval = setInterval(showSlides, 3000);
+      }
+    }
+
+    function stopSlideshow() {
+      clearInterval(slideInterval);
+      slideInterval = null;                 //reset
+    }
+
+    function currentslide(n) {
+      stopSlideshow();   // stop first to avoid double interval
+      slideIndex = n - 1;
+      showSlides();
+      startSlideshow();  //  restart autoplay again
+    }
+
+    //to stop slideshow when not visible//
+    document.addEventListener("visibilitychange", () => {
+      document.hidden ? stopSlideshow() : startSlideshow();
+    });
+
+
+    /****************** HAMBURGER & DROPDOWN LOGIC ***********************/
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.menu');
+    const dropdowns = document.querySelectorAll(".adropdown");
+
+    // 1. Toggle Hamburger when clicking the icon
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevents the document click from closing it immediately
+      navLinks.classList.toggle('open');
+      hamburger.classList.toggle('toggle');
+    });
+
+    // 2. Handle clicks on menu links
+    document.querySelectorAll(".menu a").forEach(link => {
+      link.addEventListener("click", (e) => {
+        const isDropdownTrigger = link.parentElement.classList.contains("adropdown");
+
+        if (window.innerWidth <= 768 && isDropdownTrigger) {
+          // If it's a dropdown parent, don't close navbar, just show menu
+          e.preventDefault();
+          e.stopPropagation();
+          link.parentElement.classList.toggle("active");
+        } else {
+          // If it's a normal link, close everything
+          closeAllMenus();
+        }
+      });
+    });
+
+    // 3. NEW: Close everything when clicking outside
+    document.addEventListener("click", (e) => {
+      const isInsideNavbar = e.target.closest(".navbar");
+
+      if (!isInsideNavbar) {
+        closeAllMenus();
+      }
+    });
+
+    // Helper function to keep code clean
+    function closeAllMenus() {
+      navLinks.classList.remove("open");
+      hamburger.classList.remove("toggle");
+      dropdowns.forEach(d => d.classList.remove("active"));
+    }
+
+    // 4. Desktop Hover Logic
+    if (window.innerWidth > 768) {
+      dropdowns.forEach(drop => {
+        drop.addEventListener("mouseenter", () => drop.classList.add("active"));
+        drop.addEventListener("mouseleave", () => drop.classList.remove("active"));
+      });
+    }
+
+    /*************************cards-container***************************/
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+      // Desktop: Hover behavior
+      card.addEventListener('mouseenter', () => {
+        if (window.innerWidth > 768) {
+          card.classList.add('active');
+        }
+      });
+
+      card.addEventListener('mouseleave', () => {
+        if (window.innerWidth > 768) {
+          card.classList.remove('active');
+        }
+      });
+
+      // Mobile/Tablet: Tap behavior
+      card.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          // If the user clicks the "Know More" button specifically, let them go
+          if (e.target.classList.contains('card-button')) return;
+
+          // Otherwise, toggle the active state for the card
+          const isActive = card.classList.contains('active');
+
+          // Close all other cards first (Optional, for accordion style)
+          cards.forEach(c => c.classList.remove('active'));
+
+          if (!isActive) {
+            card.classList.add('active');
+          }
+        }
+      });
+    });
+
+    /******************projects-container***********************/
+    const tabButtonsWrapper = document.querySelector(".tab-buttons");
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabDetails = document.querySelectorAll(".tab-details");
+
+    tabButtonsWrapper.addEventListener("click", function (e) {
+      const btn = e.target.closest(".tab-button");
+      if (!btn) return;
+
+      tabButtons.forEach(b => b.classList.remove("active"));
+      tabDetails.forEach(d => d.classList.remove("active"));
+
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+
+    /******************************review-container****************************/
+    const reviews = [
+      {
+        name: "Ravi Teja",
+        role: "Actor",
+        img: "https://i.pravatar.cc/150?img=11",
+        text: "Bharatha Rakshana Kavacham is a non-governmental organization (NGO), which is deeply committed to strengthen education foundation and"
+      },
+      {
+        name: "Priya",
+        role: "Manager at accenture",
+        img: "https://i.pravatar.cc/150?img=5",
+        text: "Bharatha Rakshana Kavacham is a non-governmental organization (NGO), which is deeply committed to strengthen education foundation and"
+      },
+      {
+        name: "Muni Kishore",
+        role: "Managing director at RGM",
+        img: "https://i.pravatar.cc/150?img=60",
+        text: "Bharatha Rakshana Kavacham is a non-governmental organization (NGO), which is deeply committed to strengthen education foundation and"
+      },
+      {
+        name: "Sunita Rao",
+        role: "HR Director",
+        img: "https://i.pravatar.cc/150?img=9",
+        text: "Bharatha Rakshana Kavacham is a non-governmental organization (NGO), which is deeply committed to strengthen education foundation and"
+      }
+    ];
+
+    const track = document.getElementById('track');
+
+    // --- SETUP: Create HTML ---
+    const createCardHTML = (review) => `
+            <div class="board">
+                <div class="img-wrapper">
+                    <img src="${review.img}" alt="${review.name}">
+                </div>
+                <h3 class="client-name">${review.name}</h3>
+                <p class="client-role">${review.role}</p>
+                <div class="quote-box">
+                    ${review.text}
+                </div>
+            </div>
+        `;
+
+    let content = '';
+    reviews.forEach(r => content += createCardHTML(r));
+    // Add clones for infinite loop
+    reviews.slice(0, 3).forEach(r => content += createCardHTML(r));
+    track.innerHTML = content;
+
+    const allCards = document.querySelectorAll('.board');
+    let currentIndex = 0;
+
+    // Dynamic settings
+    let cardWidth = 33.333;
+    let activeOffset = 1; // Desktop: Middle card is active
+
+    // --- RESPONSIVE LOGIC ---
+    function updateLayoutSettings() {
+      if (window.innerWidth <= 768) {
+        // Mobile: 100% width, Current card is active (no offset)
+        cardWidth = 100;
+        activeOffset = 0;
+      } else {
+        // Desktop: 33% width, Next card is active (middle)
+        cardWidth = 33.333;
+        activeOffset = 1;
+      }
+      updateCarousel(); // Refresh view instantly
+    }
+
+    function updateCarousel() {
+      // 1. Move Track
+      track.style.transition = "transform 1s ease-in-out";
+      track.style.transform = `translateX(-${currentIndex * cardWidth}%)`;
+
+      // 2. Highlight Logic
+      allCards.forEach(c => c.classList.remove('active'));
+
+      // Check if the target card exists before adding class
+      let targetIndex = currentIndex + activeOffset;
+      if (allCards[targetIndex]) {
+        allCards[targetIndex].classList.add('active');
+      }
+
+      // 3. bits Logic
+      const bits = document.querySelectorAll('.bit');
+      bits.forEach(d => d.classList.remove('active'));
+      let realIndex = currentIndex % reviews.length;
+      if (bits[realIndex]) bits[realIndex].classList.add('active');
+    }
+
+    function nextSlide() {
+      currentIndex++;
+      updateCarousel();
+
+      // Infinite Loop Reset
+      if (currentIndex >= reviews.length) {
+        setTimeout(() => {
+          track.style.transition = "none";
+          currentIndex = 0;
+          track.style.transform = `translateX(0)`;
+
+          // Re-highlight immediately after snap
+          allCards.forEach(c => c.classList.remove('active'));
+          let targetIndex = 0 + activeOffset;
+          if (allCards[targetIndex]) allCards[targetIndex].classList.add('active');
+        }, 1000);
+      }
+    }
+
+    // --- INITIALIZATION ---
+    // Listen for screen resize to fix layout dynamically
+    window.addEventListener('resize', updateLayoutSettings);
+
+    // Run once on load
+    updateLayoutSettings();
+
+    // Set Interval
+    setInterval(nextSlide, 5000);
+
+    //scroll button
+        const scrollBtn = document.getElementById("scrollTopBtn");
+
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > window.innerHeight) {
+                scrollBtn.classList.add("show");
+            } else {
+                scrollBtn.classList.remove("show");
+            }
+        });
+
+        scrollBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+
+        /* DONATE NOW BUTTON */
+        const donateBtn = document.getElementById("floatingDonateAlt");
+
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > window.innerHeight) {
+                donateBtn.classList.add("show");
+            } else {
+                donateBtn.classList.remove("show");
+            }
+        });
+  </script>
+</body>
+
+</html>
